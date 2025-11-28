@@ -1,15 +1,6 @@
 # questions.py
 
-# Step 6: The available parties
-SWISS_PARTIES = [
-    "SVP (Swiss People's Party)",
-    "FDP (The Liberals)",
-    "EVP (Evangelical People's Party)",
-    "die Mitte (The Centre)",
-    "Grünliberale (Green Liberals)",
-    "SP (Social Democrats)",
-    "Grüne (The Greens)"
-]
+
 
 # Structure: Question text, Left Anchor (0.0), Right Anchor (1.0)
 QUESTIONS_DATA = [
