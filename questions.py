@@ -1,3 +1,13 @@
+SWISS_PARTIES = {
+    "SP": {"econ": -2, "social": -3},
+    "FDP": {"econ": 3, "social": 1},
+    "SVP": {"econ": 4, "social": 3},
+    "Die Mitte": {"econ": 1, "social": 0},
+    "Grüne": {"econ": -4, "social": -3},
+    "GLP": {"econ": 2, "social": -1},
+}
+
+
 # questions.py
 
 
