@@ -1,7 +1,5 @@
-import random
-import numpy as np
-from questions import QUESTIONS_DATA, SWISS_PARTIES
-from fuzzy_matching_pol import FuzzyMatcher
+from config.questions import QUESTIONS_DATA
+from political.fuzzy_matching_pol import FuzzyMatcher
 
 # --- MOCK DATA GENERATOR ---
 # Hans answers like someone from the SVP

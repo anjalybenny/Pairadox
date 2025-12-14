@@ -1,4 +1,4 @@
-from hobby_questions import HOBBY_QUESTIONS_DATA
+from config.hobby_questions import HOBBY_QUESTIONS_DATA
 
 
 def get_hobby_answers_from_user():

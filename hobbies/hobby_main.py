@@ -1,5 +1,5 @@
-from hobby_questionnaire import get_hobby_answers_from_user
-from hobby_control_system import map_tuple_to_fuzzy_inputs, compute_hobby_categories
+from hobbies.questionnaire import get_hobby_answers_from_user
+from hobbies.control_system import map_tuple_to_fuzzy_inputs, compute_hobby_categories
 
 def main():
 

@@ -1,10 +1,10 @@
-from hobby_control_system import (
+from hobbies.control_system import (
     get_hobby_answers_from_user,
     map_tuple_to_fuzzy_inputs,
     compute_hobby_categories,
 )
 
-from hobby_matching_system import (
+from hobbies.hobby_matching_system import (
     compute_compatibility_from_profiles,
 )
 
@@ -16,11 +16,11 @@ def compute_user_profile_from_answers(answers_tuple):
 
 
 if __name__ == "__main__":
-    print("=== Isabelle ===")
+    print("=== User 1 ===")
     answers_a = get_hobby_answers_from_user()
     profile_a = compute_user_profile_from_answers(answers_a)
 
-    print("\n=== Valentin ===")
+    print("\n=== User 2 ===")
     answers_b = get_hobby_answers_from_user()
     profile_b = compute_user_profile_from_answers(answers_b)
 
