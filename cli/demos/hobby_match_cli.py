@@ -1,10 +1,10 @@
+from hobbies.questionnaire import get_hobby_answers_from_user
 from hobbies.control_system import (
-    get_hobby_answers_from_user,
     map_tuple_to_fuzzy_inputs,
     compute_hobby_categories,
 )
 
-from hobbies.hobby_matching_system import (
+from hobbies.matching import (
     compute_compatibility_from_profiles,
 )
 
@@ -31,3 +31,4 @@ if __name__ == "__main__":
     print("Valentin:", profile_b)
     print("Total category difference:", diff)
     print("Hobby Compatability (0–1):", compat)
+

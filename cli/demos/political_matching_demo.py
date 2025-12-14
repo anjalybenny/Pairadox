@@ -1,5 +1,7 @@
 from config.questions import QUESTIONS_DATA
 from political.fuzzy_matching_pol import FuzzyMatcher
+from political.utils import calculate_total_difference
+
 
 # --- MOCK DATA GENERATOR ---
 # Hans answers like someone from the SVP
@@ -39,16 +41,6 @@ def get_user_input():
                 print(">> Invalid input. Please enter a number (e.g., 0.5, 0.2).")
     
     return tuple(user_answers)
-
-def calculate_total_difference(user_a_answers, user_b_answers):
-    # Step 4: Calculate differences
-    diffs = []
-    for i in range(len(user_a_answers)):
-        d = abs(user_a_answers[i] - user_b_answers[i])
-        diffs.append(d)
-    
-    total_diff = sum(diffs)
-    return total_diff
 
 
 

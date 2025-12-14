@@ -1,12 +1,12 @@
 # pairadox_full.py
-from evaluation_fuzzy import evaluate_match
+from hobbies_and_political.overall_fuzzy import evaluate_match
 
 from config.questions import QUESTIONS_DATA
 from political.fuzzy_matching_pol import FuzzyMatcher
 
 from hobbies.questionnaire import get_hobby_answers_from_user
 from hobbies.control_system import map_tuple_to_fuzzy_inputs, compute_hobby_categories
-from hobbies.hobby_matching_system import compute_compatibility_from_profiles
+from hobbies.matching import compute_compatibility_from_profiles
 
 
 # ---------- POLITICAL PART ----------
