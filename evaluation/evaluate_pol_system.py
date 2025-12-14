@@ -1,6 +1,6 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from fuzzy_matching import FuzzyMatcher
+from political.fuzzy_matching_pol import FuzzyMatcher
 from crisp_matching_pol import CrispMatcher
 
 def main():

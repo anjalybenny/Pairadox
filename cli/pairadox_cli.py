@@ -1,3 +1,4 @@
+DEMO_MODE = True
 # pairadox_full.py
 from hobbies_and_political.overall_fuzzy import evaluate_match
 
@@ -8,6 +9,41 @@ from hobbies.questionnaire import get_hobby_answers_from_user
 from hobbies.control_system import map_tuple_to_fuzzy_inputs, compute_hobby_categories
 from hobbies.matching import compute_compatibility_from_profiles
 
+
+DEMO_USERS = [
+    {
+        "name": "Isabelle (Demo)",
+        # 30 political answers (0–1)
+        "political_answers": [0.0] * 30,  # extreme left and outdoors  lover
+        # 24 hobby answers (0–1)
+        "hobby_answers": [
+            0.9, 0.8, 0.9, 0.7,
+            0.8, 0.7, 0.8,
+            0.9, 0.8, 0.8, 0.7,
+            0.6, 0.7, 0.6,
+            0.9, 0.9,
+            0.3, 0.2,
+            0.6,
+            0.4, 0.5,
+            0.7, 0.6, 0.8,
+        ],
+    },
+    {
+        "name": "Valentin (Demo)",
+        "political_answers": [1.0] * 30,  # extreme right
+        "hobby_answers": [
+            0.9, 0.8, 0.9, 0.7,
+            0.8, 0.7, 0.8,
+            0.9, 0.8, 0.8, 0.7,
+            0.6, 0.7, 0.6,
+            0.9, 0.9,
+            0.3, 0.2,
+            0.6,
+            0.4, 0.5,
+            0.7, 0.6, 0.8,
+        ],
+    },
+]
 
 # ---------- POLITICAL PART ----------
 
@@ -90,32 +126,32 @@ def compute_hobby_profile_from_answers(raw_answers):
 # ---------- MAIN FULL MATCH ----------
 
 def main():
-    print("=== Pairadox: Political + Hobby Matching ===")
 
-    # You can change these names if you want (for example: 'Isabelle' and 'Valentin')
-    name_a = "Isabelle"
-    name_b = "Valentin"
+    if DEMO_MODE:
 
-    # ----- Isabelle -----
-    print("\n############################")
-    print(f"### {name_a}: ANSWERS ###")
-    print("############################")
+        user_a = DEMO_USERS[0]
+        user_b = DEMO_USERS[1]
 
-    pol_a = get_political_answers_from_user(name_a)
-    hobby_raw_a = get_hobby_answers_from_user()
+        pol_a = user_a["political_answers"]
+        pol_b = user_b["political_answers"]
+
+        hobby_raw_a = user_a["hobby_answers"]
+        hobby_raw_b = user_b["hobby_answers"]
+
+    else:
+        print("\n=== RUNNING IN INTERACTIVE MODE ===")
+
+        pol_a = get_political_answers_from_user("User A")
+        pol_b = get_political_answers_from_user("User B")
+
+        hobby_raw_a = get_hobby_answers_from_user("User A")
+        hobby_raw_b = get_hobby_answers_from_user("User B")
+
+    # ----- HOBBY PROFILES -----
     hobby_profile_a = compute_hobby_profile_from_answers(hobby_raw_a)
-
-    # ----- Valentin
-    #  -----
-    print("\n############################")
-    print(f"### {name_b}: ANSWERS ###")
-    print("############################")
-
-    pol_b = get_political_answers_from_user(name_b)
-    hobby_raw_b = get_hobby_answers_from_user()
     hobby_profile_b = compute_hobby_profile_from_answers(hobby_raw_b)
 
-     # ----- POLITICAL MATCH -----
+    # ----- POLITICAL MATCH -----
     pol_diff = compute_political_total_diff(pol_a, pol_b)
     pol_compat = compute_political_compatibility(pol_diff)
 
@@ -124,17 +160,17 @@ def main():
         hobby_profile_a, hobby_profile_b
     )
 
-    # ----- OVERALL EVALUATION -----
+    # ----- OVERALL MATCH -----
     overall = evaluate_match(pol_compat, hobby_compat)
 
     if overall < 0.33:
-        overall_label = "LOW"
+        label = "LOW"
     elif overall < 0.66:
-        overall_label = "MEDIUM"
+        label = "MEDIUM"
     else:
-        overall_label = "HIGH"
+        label = "HIGH"
 
-    # ----- DISPLAY RESULTS -----
+
     print("\n==================== MATCH RESULTS ====================")
     print(f"Political total difference:     {pol_diff:.3f}")
     print(f"Political compatibility (0–1):  {pol_compat:.3f}")
@@ -142,8 +178,10 @@ def main():
     print(f"Hobby compatibility (0–1):      {hobby_compat:.3f}")
     print("-------------------------------------------------------")
     print(f"Overall match (0–1):            {overall:.3f}")
-    print(f"Final fuzzy label:              {overall_label}")
+    print(f"Final fuzzy label:              {label}")
     print("=======================================================")
+
+
 
 
 if __name__ == "__main__":

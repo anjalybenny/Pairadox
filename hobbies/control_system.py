@@ -268,9 +268,7 @@ rule_wellness_low = ctrl.Rule(
 )
 
 
-# -----------------------------
-#  CONTROL SYSTEM
-# -----------------------------
+
 hobby_ctrl = ctrl.ControlSystem([
     rule_outdoors_high, rule_outdoors_low,
     rule_sports_high, rule_sports_low,
