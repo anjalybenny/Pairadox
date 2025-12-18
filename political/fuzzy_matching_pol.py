@@ -16,7 +16,7 @@ class FuzzyMatcher:
         self.diff_medium = fuzz.trapmf(self.x_diff, [8, 12, 18, 22])
         
         # High difference = Good Match (~18 to 30)
-        self.diff_high = fuzz.trimf(self.x_diff, [18, 30, 30])
+        self.diff_high = fuzz.trimf(self.x_diff, [20, 30, 30])
 
     def get_fuzzy_match_level(self, total_difference):
         """

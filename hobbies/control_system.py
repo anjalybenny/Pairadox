@@ -2,12 +2,46 @@ import numpy as np
 import skfuzzy as fuzz
 from skfuzzy import control as ctrl
 
-from hobby_questionnaire import get_hobby_answers_from_user
+CATEGORY_NAMES = [
+    'outdoors',
+    'sports_fitness',
+    'arts_culture',
+    'social_lifestyle',
+    'travel_discovery',
+    'tech_entertainment',
+    'creative_diy',
+    'learning_growth',
+    'wellness_mindfulness',
+]
+
+HOBBY_VARIABLE_NAMES = [
+    'hiking',
+    'cycling',
+    'skiing',
+    'gardening',
+    'walking',
+    'fitness',
+    'swimming',
+    'listening_music',
+    'reading',
+    'watching_films_or_series',
+    'photography',
+    'cooking',
+    'eating_out',
+    'volunteering',
+    'travel_switzerland',
+    'travel_abroad',
+    'social_media',
+    'video_games',
+    'crafting_diy',
+    'learning_languages',
+    'continuing_education',
+    'meditation',
+    'yoga',
+    'spa_sauna',
+]
 
 
-# -----------------------------
-#  UNIVERSES
-# -----------------------------
 hobby_interest_universe = np.arange(0, 1.01, 0.01)
 category_universe = np.arange(0, 1.01, 0.01)
 
@@ -26,9 +60,7 @@ def add_category(category_variable):
     category_variable['high']   = fuzz.trimf(category_variable.universe, [0.5, 1.0, 1.0])
 
 
-# -----------------------------
-#  ANTECEDENTS (24 HOBBIES)
-# -----------------------------
+
 hiking = ctrl.Antecedent(hobby_interest_universe, 'hiking')
 cycling = ctrl.Antecedent(hobby_interest_universe, 'cycling')
 skiing = ctrl.Antecedent(hobby_interest_universe, 'skiing')
@@ -66,7 +98,7 @@ meditation = ctrl.Antecedent(hobby_interest_universe, 'meditation')
 yoga = ctrl.Antecedent(hobby_interest_universe, 'yoga')
 spa_sauna = ctrl.Antecedent(hobby_interest_universe, 'spa_sauna')
 
-# add interest MFs to all
+# add interest memberships functions to all hobbies
 for hobby in [
     hiking, cycling, skiing, gardening,
     walking, fitness, swimming,
@@ -81,16 +113,14 @@ for hobby in [
     add_hobby_interest(hobby)
 
 
-# -----------------------------
-#  CONSEQUENTS (9 CATEGORIES)
-# -----------------------------
+
 outdoors = ctrl.Consequent(category_universe, 'outdoors')
 sports_fitness = ctrl.Consequent(category_universe, 'sports_fitness')
 arts_culture = ctrl.Consequent(category_universe, 'arts_culture')
 social_lifestyle = ctrl.Consequent(category_universe, 'social_lifestyle')
 travel_discovery = ctrl.Consequent(category_universe, 'travel_discovery')
 tech_entertainment = ctrl.Consequent(category_universe, 'tech_entertainment')
-creative_diy_cat = ctrl.Consequent(category_universe, 'creative_diy')
+creative_diy = ctrl.Consequent(category_universe, 'creative_diy')
 learning_growth = ctrl.Consequent(category_universe, 'learning_growth')
 wellness_mindfulness = ctrl.Consequent(category_universe, 'wellness_mindfulness')
 
@@ -101,16 +131,13 @@ for category in [
     social_lifestyle,
     travel_discovery,
     tech_entertainment,
-    creative_diy_cat,
+    creative_diy,
     learning_growth,
     wellness_mindfulness,
 ]:
     add_category(category)
 
 
-# -----------------------------
-#  RULES
-# -----------------------------
 # Outdoors
 rule_outdoors_high = ctrl.Rule(
     hiking['like'] | hiking['love'] |
@@ -204,12 +231,12 @@ rule_tech_low = ctrl.Rule(
 # Creative & DIY
 rule_creative_high = ctrl.Rule(
     crafting_diy['like'] | crafting_diy['love'],
-    creative_diy_cat['high']
+    creative_diy['high']
 )
 
 rule_creative_low = ctrl.Rule(
     crafting_diy['hate'],
-    creative_diy_cat['low']
+    creative_diy['low']
 )
 
 # Learning & Growth
@@ -241,9 +268,7 @@ rule_wellness_low = ctrl.Rule(
 )
 
 
-# -----------------------------
-#  CONTROL SYSTEM
-# -----------------------------
+
 hobby_ctrl = ctrl.ControlSystem([
     rule_outdoors_high, rule_outdoors_low,
     rule_sports_high, rule_sports_low,
@@ -256,74 +281,25 @@ hobby_ctrl = ctrl.ControlSystem([
     rule_wellness_high, rule_wellness_low,
 ])
 
-hobby_sim = ctrl.ControlSystemSimulation(hobby_ctrl)
-
-
-# -----------------------------
-#  MAPPING & COMPUTE
-# -----------------------------
 def map_tuple_to_fuzzy_inputs(answer_tuple):
-    fuzzy_variable_names = [
-        'hiking',
-        'cycling',
-        'skiing',
-        'gardening',
-        'walking',
-        'fitness',
-        'swimming',
-        'listening_music',
-        'reading',
-        'watching_films_or_series',
-        'photography',
-        'cooking',
-        'eating_out',
-        'volunteering',
-        'travel_switzerland',
-        'travel_abroad',
-        'social_media',
-        'video_games',
-        'crafting_diy',
-        'learning_languages',
-        'continuing_education',
-        'meditation',
-        'yoga',
-        'spa_sauna',
-    ]
-    return dict(zip(fuzzy_variable_names, answer_tuple))
+    if len(answer_tuple) != len(HOBBY_VARIABLE_NAMES):
+        raise ValueError(
+            f"Expected {len(HOBBY_VARIABLE_NAMES)} hobby answers, "
+            f"got {len(answer_tuple)}"
+        )
+    return dict(zip(HOBBY_VARIABLE_NAMES, answer_tuple))
 
 
-def compute_hobby_categories(user):
-    """
-    user: dict with 24 hobbies (0–1)
-    returns: dict with 9 category scores (0–1), always including all 9 keys.
-    """
-    # Create a fresh simulation every time
+def compute_hobby_categories(user: dict) -> dict:
     sim = ctrl.ControlSystemSimulation(hobby_ctrl)
 
-    # Set inputs
     for k, v in user.items():
         sim.input[k] = float(v)
 
-    # Run fuzzy system
     sim.compute()
 
+    result = {name: 0.0 for name in CATEGORY_NAMES}
 
-    category_names = [
-        'outdoors',
-        'sports_fitness',
-        'arts_culture',
-        'social_lifestyle',
-        'travel_discovery',
-        'tech_entertainment',
-        'creative_diy',
-        'learning_growth',
-        'wellness_mindfulness',
-    ]
-
-    # Start with all categories = 0.0
-    result = {name: 0.0 for name in category_names}
-
-    # Fill in whatever the fuzzy system actually computed
     for name, value in sim.output.items():
         if name in result:
             result[name] = float(value)
@@ -331,14 +307,6 @@ def compute_hobby_categories(user):
     return result
 
 
-
-if __name__ == "__main__":
-    raw_answers = get_hobby_answers_from_user()
-    user_inputs = map_tuple_to_fuzzy_inputs(raw_answers)
-    scores = compute_hobby_categories(user_inputs)
-    print("\n=== Your Hobby Profile ===")
-    for category, value in scores.items():
-        print(f"{category}: {value:.3f}")
 
 
 

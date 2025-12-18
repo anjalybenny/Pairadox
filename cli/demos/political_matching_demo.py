@@ -1,30 +1,17 @@
-import random
-import numpy as np
-from questions import QUESTIONS_DATA, SWISS_PARTIES
-from fuzzy_matching import FuzzyMatcher
+from config.questions import QUESTIONS_DATA
+from political.fuzzy_matching_pol import FuzzyMatcher
+from political.utils import calculate_total_difference
+
 
 # --- MOCK DATA GENERATOR ---
-# Since we now have 30 questions, we generate mock answers 
-# to ensure the lists are the correct length.
-def generate_mock_answers(bias):
-    """
-    bias: 'left' (favors 0.0-0.4), 'right' (favors 0.6-1.0), 'center' (favors 0.3-0.7)
-    """
-    answers = []
-    for _ in range(30):
-        if bias == 'left':
-            val = random.uniform(0.0, 0.4)
-        elif bias == 'right':
-            val = random.uniform(0.6, 1.0)
-        else:
-            val = random.uniform(0.3, 0.7)
-        answers.append(round(val, 2))
-    return tuple(answers)
+# Hans answers like someone from the SVP
+# Lisa answers like someone form the SP
+# Marc answers like someone from the Center
 
 MOCK_USERS = [
-    {"name": "Hans ", "answers": generate_mock_answers('right')},
-    {"name": "Lisa ",  "answers": generate_mock_answers('left')},
-    {"name": "Marc ",   "answers": generate_mock_answers('center')}
+    {"name": "Hans ", "answers":[0.1, 0.3, 0.9, 0.7, 0.8, 0.8, 0.8, 0.7, 0.1, 0.8, 0.8, 0, 0.1, 0.1, 0.1, 0.8, 0.1, 0.1, 0.1, 0, 0, 0, 0.2, 0.9, 0.9, 0.1, 0.9, 0.8, 0.3, 0.1] },
+    {"name": "Lisa ",  "answers": [0.9, 0.2, 0.1, 0, 0, 0.8, 0.7, 0.1, 1, 0.1, 0.2, 0.9, 0.8, 0.9, 0.7, 0.3, 1, 1, 1, 1, 0.9, 0.9, 0.9, 0.4, 0.2, 0.6, 0.1, 0.3, 0.9, 0.9]},
+    {"name": "Marc ",   "answers": [0.6, 0.7, 0.6, 0.3, 0.4, 0.9, 0.7, 0.5, 0.6, 0.6, 0.6, 0.4, 0.6, 0.7, 0.4, 0.6, 0.7, 0.8, 0.6, 0.6, 0.5, 0.6, 0.7, 0.8, 0.5, 0.4, 0.5, 0.5, 0.7, 0.7]}
 ]
 
 def get_user_input():
@@ -54,16 +41,6 @@ def get_user_input():
                 print(">> Invalid input. Please enter a number (e.g., 0.5, 0.2).")
     
     return tuple(user_answers)
-
-def calculate_total_difference(user_a_answers, user_b_answers):
-    # Step 4: Calculate differences
-    diffs = []
-    for i in range(len(user_a_answers)):
-        d = abs(user_a_answers[i] - user_b_answers[i])
-        diffs.append(d)
-    
-    total_diff = sum(diffs)
-    return total_diff
 
 
 

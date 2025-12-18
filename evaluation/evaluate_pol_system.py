@@ -1,0 +1,77 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from political.fuzzy_matching_pol import FuzzyMatcher
+from crisp_matching_pol import CrispMatcher
+
+def main():
+    # 1. Initialize both systems
+    fuzzy = FuzzyMatcher()
+    crisp = CrispMatcher()
+
+    # 2. Generate a sweep of all possible differences (0.0 to 30.0)
+    # We use 300 points to make the lines look smooth
+    x_values = np.linspace(0, 30, 300)
+
+    # 3. Collect Data
+    # Lists to store fuzzy results
+    f_low, f_med, f_high = [], [], []
+    
+    # Lists to store crisp results
+    c_low, c_med, c_high = [], [], []
+
+    for val in x_values:
+        # Get Fuzzy Data
+        f_res = fuzzy.get_fuzzy_match_level(val)
+        f_low.append(f_res['low'])
+        f_med.append(f_res['medium'])
+        f_high.append(f_res['high'])
+
+        # Get Crisp Data
+        c_l, c_m, c_h = crisp.get_match_label(val)
+        c_low.append(c_l)
+        c_med.append(c_m)
+        c_high.append(c_h)
+
+    # 4. VISUALIZATION
+    plt.figure(figsize=(12, 8))
+
+    # --- PLOT 1: FUZZY SYSTEM ---
+    plt.subplot(2, 1, 1) # Top Graph
+    plt.title("System A: Fuzzy Logic (Smooth Transitions)")
+    plt.plot(x_values, f_low, 'g-', linewidth=2, label='Low Diff (Bad Match)')
+    plt.plot(x_values, f_med, 'b-', linewidth=2, label='Medium Diff')
+    plt.plot(x_values, f_high, 'r-', linewidth=2, label='High Diff (Good Match)')
+    
+    # Add filler color to show overlap
+    plt.fill_between(x_values, f_low, color='green', alpha=0.1)
+    plt.fill_between(x_values, f_med, color='blue', alpha=0.1)
+    plt.fill_between(x_values, f_high, color='red', alpha=0.1)
+    
+    plt.ylabel("Membership Degree")
+    plt.grid(True, alpha=0.3)
+    plt.legend(loc='center right')
+
+
+    # --- PLOT 2: CRISP SYSTEM ---
+    plt.subplot(2, 1, 2) # Bottom Graph
+    plt.title("System B: Crisp Logic (Hard Thresholds)")
+    
+    # We plot these as steps to show the "Jump"
+    plt.step(x_values, c_low, 'g-', linewidth=2, label='Low Diff (Bad Match)', where='post')
+    plt.step(x_values, c_med, 'b-', linewidth=2, label='Medium Diff', where='post')
+    plt.step(x_values, c_high, 'r-', linewidth=2, label='High Diff (Good Match)', where='post')
+
+    # Add vertical dotted lines to show the "Cliff"
+    plt.axvline(x=10, color='k', linestyle='--', alpha=0.5, label='Threshold 1')
+    plt.axvline(x=21, color='k', linestyle='--', alpha=0.5, label='Threshold 2')
+
+    plt.xlabel("Total Difference Score (0 = Perfect Match, 30 = Opposite)")
+    plt.ylabel("Active Logic State (0 or 1)")
+    plt.grid(True, alpha=0.3)
+    plt.legend(loc='center right')
+
+    plt.tight_layout()
+    plt.show()
+
+if __name__ == "__main__":
+    main()
